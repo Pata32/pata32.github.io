@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="custom.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="images/logo3.png">
+    <script src="index.js"></script>
+    
+    <title>Document</title>
+</head>
+<body>
+    <div class="div-cards">
+        <img src="images/logo2.png" onclick="window.location.reload()" alt="Description de l'image" class="lk9-img">
+        <h1>[LK9] Mulligan Calculator</h1>
+        <label>Nombre total de carte dans le deck</label>
+        <input class="input-cards" id="N" type="text" value="60">
+        <label>Nombre de carte pioché </label>
+        <input class="input-cards" id="K" type="text" value="14">
+        <br>
+        <div id="entry">
+            <div class="entrys">
+                <p>Entrée 1</p>
+                <label>Nombre d'occurence de la carte dans le deck</label>
+                <input class="input-cards" id="n_1" type="text" value="4">
+                <label>Nombre de carte désiré </label>
+                <input class="input-cards" id="k_1" type="text" value="1">
+            </div>
+        </div>
+        
+        <br>
+        <button class="btn" onclick="f_js_calculProba()">Calculer</button>
+        <button class="btn" onclick="f_js_addEntry()">Ajouter une entrée</button>
+        <div id="result">
+            <p id="minimum"></p>
+            <p id="exact"></p>
+        </div>
+    </div>
+    <footer>
+        <p>© 2025 [LK9] Lorcaniche. Tous droits réservés. Pata</p>
+      </footer>
+</body>
+</html>
