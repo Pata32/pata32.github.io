@@ -8,16 +8,16 @@ function initMeleeUI(){
   section.id='tab-melee'; section.className='tab-pane';
   section.innerHTML=`
     <section class="card">
-      <h2>💥 Mêlée générale</h2>
-      <p class="dashboard-note">Teste toutes les combinaisons <strong>Pokémon + attaque + objet</strong> contre tous les autres Pokémon avec les mêmes règles que le duel.</p>
-      <div class="section-note"><strong>Classement :</strong> chaque Pokémon est évalué avec chaque attaque et chaque objet. Les adversaires reçoivent à chaque tour une attaque et un objet aléatoires. Le Top 10 affiche les Pokémon selon leur meilleure configuration trouvée.</div>
+      <h2>💥 Mêlée générale — tournoi exhaustif</h2>
+      <p class="dashboard-note">Chaque combinaison <strong>Pokémon + attaque + objet</strong> affronte <strong>toutes les autres combinaisons</strong>. Les combats utilisent les mêmes règles que le duel.</p>
+      <div class="section-note"><strong>Principe :</strong> il s'agit d'un tournoi exhaustif. Une configuration ne s'affronte pas elle-même. Pour chaque paire de configurations, plusieurs combats peuvent être joués et les résultats sont attribués aux deux configurations.</div>
       <div class="form-grid">
         <div><label>Combats par matchup</label><input id="meleeBattles" type="number" min="1" max="50" value="5"></div>
-        <div><label>Configurations testées</label><div class="section-note" style="margin:0">Toutes les attaques × tous les objets</div></div>
-        <div><label>Choix adverse</label><div class="section-note" style="margin:0">Aléatoire à chaque tour</div></div>
-        <div><label>Limite</label><div class="section-note" style="margin:0">100 phases maximum</div></div>
+        <div><label>Configurations</label><div class="section-note" style="margin:0">Pokémon × attaques × objets</div></div>
+        <div><label>Matchups</label><div class="section-note" style="margin:0">Chaque paire unique de configurations</div></div>
+        <div><label>Limite</label><div class="section-note" style="margin:0">100 phases maximum / combat</div></div>
       </div>
-      <div class="duel-actions"><button class="btn" id="meleeStartBtn">💥 Lancer la mêlée</button><button class="btn secondary" id="meleeStopBtn" disabled>⏹ Arrêter</button></div>
+      <div class="duel-actions"><button class="btn" id="meleeStartBtn">💥 Lancer le tournoi</button><button class="btn secondary" id="meleeStopBtn" disabled>⏹ Arrêter</button></div>
       <div id="meleeProgress" class="status" style="margin-top:14px">Prêt à lancer.</div>
       <div id="meleeSummary"></div>
       <div class="grid" style="margin-top:16px">
@@ -27,58 +27,61 @@ function initMeleeUI(){
       <section class="card" style="margin-top:16px"><h3>📊 Toutes les configurations</h3><div class="scroll"><table id="meleeFullTable"></table></div></section>
     </section>`;
   main.appendChild(section);
-  const style=document.createElement('style');
-  style.textContent='.melee-placeholder{}'; document.head.appendChild(style);
   tab.addEventListener('click',()=>{
     document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===tab));
     document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p===section));
     localStorage.setItem('pokemon-wargame-active-tab','melee'); window.scrollTo({top:0,behavior:'smooth'});
   });
+  if(localStorage.getItem('pokemon-wargame-active-tab')==='melee') tab.click();
 }
 
 let meleeRunning=false;
 
 function meleeCloneItem(item){ return item ? clone(item) : null; }
-function meleeRandom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-function meleeConfigLabel(p,a,item){ return `${p.name} — ${a.name} — ${item?item.name:"Sans objet"}`; }
 
-function meleeFight(pA,aA,iA,pB,aB,iB){
-  const A={base:pA,maxHp:pA.hp,hp:pA.hp,item:meleeCloneItem(iA),consumed:false};
-  const B={base:pB,maxHp:pB.hp,hp:pB.hp,item:meleeCloneItem(iB),consumed:false};
+function meleeFight(cA,cB){
+  const A={base:cA.p,maxHp:cA.p.hp,hp:cA.p.hp,item:meleeCloneItem(cA.i),consumed:false};
+  const B={base:cB.p,maxHp:cB.p.hp,hp:cB.p.hp,item:meleeCloneItem(cB.i),consumed:false};
   let phases=0;
-  const sa=effectiveStats(pA,A.item), sb=effectiveStats(pB,B.item);
+  const sa=effectiveStats(cA.p,A.item), sb=effectiveStats(cB.p,B.item);
   let order;
   if(sa.speed>sb.speed) order=["A","B"];
   else if(sb.speed>sa.speed) order=["B","A"];
-  else if(score(pA)<score(pB)) order=["A","B"];
-  else if(score(pB)<score(pA)) order=["B","A"];
+  else if(score(cA.p)<score(cB.p)) order=["A","B"];
+  else if(score(cB.p)<score(cA.p)) order=["B","A"];
   else order=Math.random()<0.5?["A","B"]:["B","A"];
+
   while(A.hp>0 && B.hp>0 && phases<100){
     phases++;
     for(const side of order){
       if(A.hp<=0||B.hp<=0) break;
       if(side==="A"){
-        const r=rollOneAttack(pA,pB,aA,A.item,B.item);
+        const r=rollOneAttack(cA.p,cB.p,cA.a,A.item,B.item);
         applyDamage(B,r.damage);
-        if(A.item?.consumeOnOffensive&&!A.consumed){A.consumed=true;}
+        if(A.item?.consumeOnOffensive&&!A.consumed) A.consumed=true;
       }else{
-        const r=rollOneAttack(pB,pA,aB,B.item,A.item);
+        const r=rollOneAttack(cB.p,cA.p,cB.a,B.item,A.item);
         applyDamage(A,r.damage);
-        if(B.item?.consumeOnOffensive&&!B.consumed){B.consumed=true;}
+        if(B.item?.consumeOnOffensive&&!B.consumed) B.consumed=true;
       }
     }
     endPhase(A); endPhase(B);
   }
-  return {winner:A.hp>0&&B.hp<=0?"A":B.hp>0&&A.hp<=0?"B":"draw",phases};
+  return A.hp>0&&B.hp<=0?"A":B.hp>0&&A.hp<=0?"B":"draw";
 }
 
-function renderMeleeTables(pokemonRows, allRows){
-  const top=pokemonRows.slice(0,10), worst=pokemonRows.slice().reverse().slice(0,10);
+function meleeKey(c){
+  return c.p.name+"|"+(c.a.code||c.a.name)+"|"+(c.i?.id||"none");
+}
+
+function renderMeleeTables(rows){
+  const top=rows.slice(0,10);
+  const worst=rows.slice().reverse().slice(0,10);
   const table=(arr)=>`<thead><tr><th>#</th><th class="left">Pokémon</th><th class="left">Attaque</th><th class="left">Objet</th><th>Victoires</th><th>Défaites</th><th>Nuls</th><th>Taux</th></tr></thead><tbody>`+
     arr.map((r,i)=>`<tr><td>${i+1}</td><td class="left"><strong>${esc(r.name)}</strong></td><td class="left">${esc(r.attack)}</td><td class="left">${esc(r.item)}</td><td>${r.wins}</td><td>${r.losses}</td><td>${r.draws}</td><td><strong>${r.rate.toFixed(1)}%</strong></td></tr>`).join("")+`</tbody>`;
   document.getElementById("meleeTopTable").innerHTML=table(top);
   document.getElementById("meleeWorstTable").innerHTML=table(worst);
-  document.getElementById("meleeFullTable").innerHTML=table(allRows);
+  document.getElementById("meleeFullTable").innerHTML=table(rows);
 }
 
 async function runMelee(){
@@ -87,52 +90,65 @@ async function runMelee(){
   meleeRunning=true;
   document.getElementById("meleeStartBtn").disabled=true;
   document.getElementById("meleeStopBtn").disabled=false;
+
   const battles=Math.min(50,Math.max(1,Number(document.getElementById("meleeBattles").value)||5));
   const items=[null,...db.items];
   const configs=[];
   for(const p of db.pokemon) for(const a of db.attacks) for(const i of items) configs.push({p,a,i});
-  const total=configs.length*db.pokemon.length*battles;
-  let done=0;
-  const results=new Map();
-  configs.forEach(c=>results.set(c.p.name+"|"+c.a.code+"|"+(c.i?.id||"none"),{name:c.p.name,attack:c.a.name,item:c.i?.name||"Sans objet",wins:0,losses:0,draws:0,rate:0}));
-  let cursor=0;
+
+  const matchupCount=configs.length*(configs.length-1)/2;
+  const totalCombats=matchupCount*battles;
+  const results=configs.map(c=>({
+    key:meleeKey(c), name:c.p.name, attack:c.a.name, item:c.i?.name||"Sans objet",
+    wins:0, losses:0, draws:0, rate:0
+  }));
+  const resultByKey=new Map(results.map(r=>[r.key,r]));
+
+  let done=0, pairDone=0;
   const progress=document.getElementById("meleeProgress");
   progress.className="status";
-  progress.textContent=`Simulation en cours… 0 / ${total.toLocaleString("fr-FR")}`;
+  progress.textContent=`Tournoi en cours… 0 / ${totalCombats.toLocaleString("fr-FR")} combats`;
 
-  while(meleeRunning && cursor<configs.length){
-    const end=Math.min(cursor+12,configs.length);
-    for(let ci=cursor;ci<end;ci++){
-      const c=configs[ci];
-      const key=c.p.name+"|"+c.a.code+"|"+(c.i?.id||"none");
-      const out=results.get(key);
-      for(const opp of db.pokemon){
-        if(opp===c.p)continue;
-        for(let n=0;n<battles;n++){
-          const oppAttack=meleeRandom(db.attacks);
-          const oppItem=meleeRandom(items);
-          const fight=meleeFight(c.p,c.a,c.i,opp,oppAttack,oppItem);
-          if(fight.winner==="A")out.wins++; else if(fight.winner==="B")out.losses++; else out.draws++;
-          done++;
-        }
+  // On traite des paquets de matchups puis on rend la main au navigateur.
+  // Chaque paire de configurations n'est jouée qu'une seule fois.
+  for(let i=0;i<configs.length-1 && meleeRunning;i++){
+    for(let j=i+1;j<configs.length && meleeRunning;j++){
+      const A=configs[i], B=configs[j];
+      const rA=resultByKey.get(meleeKey(A));
+      const rB=resultByKey.get(meleeKey(B));
+
+      for(let n=0;n<battles;n++){
+        const winner=meleeFight(A,B);
+        if(winner==="A"){rA.wins++;rB.losses++;}
+        else if(winner==="B"){rB.wins++;rA.losses++;}
+        else{rA.draws++;rB.draws++;}
+        done++;
+      }
+
+      pairDone++;
+      if(pairDone%25===0){
+        const pct=done/totalCombats*100;
+        progress.textContent=`Tournoi en cours… ${done.toLocaleString("fr-FR")} / ${totalCombats.toLocaleString("fr-FR")} (${pct.toFixed(1)}%)`;
+        await new Promise(requestAnimationFrame);
       }
     }
-    cursor=end;
-    const pct=done/total*100;
-    progress.textContent=`Simulation en cours… ${done.toLocaleString("fr-FR")} / ${total.toLocaleString("fr-FR")} (${pct.toFixed(0)}%)`;
-    await new Promise(requestAnimationFrame);
   }
+
   if(!meleeRunning){
     progress.className="status error";
-    progress.textContent="Simulation arrêtée.";
+    progress.textContent=`Tournoi arrêté — ${done.toLocaleString("fr-FR")} combats terminés.`;
   }else{
-    const rows=[...results.values()].map(r=>({...r,rate:(r.wins+r.draws*0.5)/(r.wins+r.losses+r.draws)*100})).sort((a,b)=>b.rate-a.rate);
-    const bestByPokemon=db.pokemon.map(p=>rows.find(r=>r.name===p.name)).filter(Boolean).sort((a,b)=>b.rate-a.rate);
-    renderMeleeTables(bestByPokemon, rows);
-    document.getElementById("meleeSummary").innerHTML=`<div class="section-note"><strong>Simulation terminée.</strong> ${configs.length.toLocaleString("fr-FR")} configurations testées, ${done.toLocaleString("fr-FR")} combats simulés. Le Top 10 classe les Pokémon selon leur meilleure configuration attaque + objet.</div>`;
+    const rows=results.map(r=>({
+      ...r,
+      rate:(r.wins+r.draws*0.5)/(r.wins+r.losses+r.draws)*100
+    })).sort((a,b)=>b.rate-a.rate || b.wins-a.wins || a.losses-b.losses);
+
+    renderMeleeTables(rows);
+    document.getElementById("meleeSummary").innerHTML=`<div class="section-note"><strong>Tournoi terminé.</strong> ${configs.length.toLocaleString("fr-FR")} configurations, ${matchupCount.toLocaleString("fr-FR")} matchups uniques et ${done.toLocaleString("fr-FR")} combats simulés. Chaque configuration a affronté toutes les autres. Le taux de victoire compte un nul pour 50%.</div>`;
     progress.className="status success";
     progress.textContent=`Terminé — ${done.toLocaleString("fr-FR")} combats.`;
   }
+
   meleeRunning=false;
   document.getElementById("meleeStartBtn").disabled=false;
   document.getElementById("meleeStopBtn").disabled=true;
