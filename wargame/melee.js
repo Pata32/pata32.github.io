@@ -128,7 +128,6 @@ async function runMelee(){
   progress.className="status";
   progress.textContent=`Phase 1/2 — sélection : 0 / ${phase1Total.toLocaleString("fr-FR")} combats`;
 
-  // PHASE 1 : 360 000 combats aléatoires servant de filtre.
   for(let n=0;n<phase1Total && meleeRunning;n++){
     let ia=Math.floor(Math.random()*configs.length);
     let ib=Math.floor(Math.random()*configs.length);
@@ -155,8 +154,7 @@ async function runMelee(){
     return;
   }
 
-  // Sélection du Top 1 000 sur la performance de la phase 1.
-  const phase1Rows=results.map(r=>({...r,phase1Rate:meleeRate(r)}))
+  const phase1Rows=results.map(r=>({...r,phase1Rate:meleeRate(r)}) )
     .sort((a,b)=>b.phase1Rate-a.phase1Rate || b.wins-a.wins || a.losses-b.losses);
   const finalists=phase1Rows.slice(0,phase2Candidates);
   const finalistKeys=new Set(finalists.map(r=>r.key));
@@ -167,7 +165,6 @@ async function runMelee(){
     `<div class="section-note" style="margin-top:8px"><strong>Top 10 provisoire :</strong></div>`+
     `<div class="scroll" style="margin-top:8px"><table>${renderMeleePhase1Table(phase1Rows)}</table></div>`;
 
-  // Remise à zéro des scores pour que le classement final repose uniquement sur le tournoi du Top 1 000.
   const finalResults=finalists.map(r=>({
     key:r.key,name:r.name,attack:r.attack,item:r.item,wins:0,losses:0,draws:0,rate:0
   }));
@@ -176,7 +173,6 @@ async function runMelee(){
   progress.textContent=`Phase 2/2 — tournoi du Top ${phase2Candidates.toLocaleString("fr-FR")} : 0 / ${phase2Total.toLocaleString("fr-FR")} combats`;
   let phase2Done=0, pairDone=0;
 
-  // PHASE 2 : tournoi exhaustif entre les 1 000 finalistes.
   for(let i=0;i<finalistConfigs.length-1 && meleeRunning;i++){
     for(let j=i+1;j<finalistConfigs.length && meleeRunning;j++){
       const A=finalistConfigs[i], B=finalistConfigs[j];
@@ -201,7 +197,7 @@ async function runMelee(){
     progress.className="status error";
     progress.textContent=`Arrêté — ${done.toLocaleString("fr-FR")} combats terminés.`;
   }else{
-    const rows=finalResults.map(r=>({...r,rate:meleeRate(r)}))
+    const rows=finalResults.map(r=>({...r,rate:meleeRate(r)}) )
       .sort((a,b)=>b.rate-a.rate || b.wins-a.wins || a.losses-b.losses);
     renderMeleeTables(rows);
     document.getElementById("meleeSummary").innerHTML=
@@ -220,3 +216,9 @@ async function runMelee(){
 initMeleeUI();
 document.getElementById("meleeStartBtn").onclick=()=>runMelee();
 document.getElementById("meleeStopBtn").onclick=()=>{meleeRunning=false;};
+
+// Charge le générateur de fiches après l'initialisation de la mêlée.
+const fichesScript=document.createElement('script');
+fichesScript.src='fiches.js';
+fichesScript.onload=()=>{};
+document.body.appendChild(fichesScript);
