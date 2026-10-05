@@ -19,7 +19,8 @@ function initFichesUI(){
 
   function renderBuilder(){
     let saved=null; try{saved=JSON.parse(localStorage.getItem('pokemon-wargame-fiches-selection')||'null')}catch(e){}
-    const slots=Array.from({length:6},(_,i)=>saved?.[i]||{pokemon:db.pokemon[i%Math.max(1,db.pokemon.length)]?.name||'',attacks:[],item:''});
+    const defaultAttacks=db.attacks.slice(0,4).map(a=>a.code);
+    const slots=Array.from({length:6},(_,i)=>saved?.[i]||{pokemon:db.pokemon[i%Math.max(1,db.pokemon.length)]?.name||'',attacks:[...defaultAttacks],item:''});
     document.getElementById('fichesBuilder').innerHTML=slots.map((slot,i)=>{
       const p=db.pokemon.find(x=>x.name===slot.pokemon)||db.pokemon[0];
       const selectedAttacks=(slot.attacks||[]).map(code=>db.attacks.findIndex(a=>a.code===code)).filter(n=>n>=0);
