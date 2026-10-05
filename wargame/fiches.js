@@ -80,8 +80,24 @@ function initFichesUI(){
     document.getElementById('fichesOutput').innerHTML=`<div class="fiches-grid">${cards}</div>`; showStatus('Les 6 fiches ont été générées.','success');
   }
 
+  function printFiches(){
+    const output=document.getElementById('fichesOutput');
+    if(!output || !output.querySelector('.game-sheet')){
+      showStatus('Génère d’abord les 6 fiches avant de lancer l’impression / PDF.','error');
+      return;
+    }
+    const oldTitle=document.title;
+    document.title='Fiches Pokémon Wargame';
+    requestAnimationFrame(()=>{
+      setTimeout(()=>{
+        window.print();
+        setTimeout(()=>{document.title=oldTitle;},1000);
+      },100);
+    });
+  }
+
   document.getElementById('fichesGenerateBtn').onclick=renderFiches;
-  document.getElementById('fichesPrintBtn').onclick=()=>window.print();
+  document.getElementById('fichesPrintBtn').onclick=printFiches;
   tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t===tab));document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p===section));localStorage.setItem('pokemon-wargame-active-tab','fiches');window.scrollTo({top:0,behavior:'smooth'});});
   renderBuilder(); if(localStorage.getItem('pokemon-wargame-active-tab')==='fiches')tab.click();
 }
