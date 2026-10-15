@@ -1,7 +1,10 @@
-const pokemons=[['Ronflex','ronflex','TANK','NORMAL',25,5,10,2,7,4],['Tortank','tortank','TANK','EAU',24,5,6,5,8,5],['Mammochon','mammochon','TANK','SOL',22,6,5,2,10,3],['Grolem','grolem','TANK','ROCHE',22,6,9,1,5,4],['Ectoplasma','ectoplasma','CONTROLE','SPECTRE',21,2,4,9,7,7],['Lokhlass','lokhlass','CONTROLE','GLACE',22,2,5,7,5,6],['Bétochef','betochef','CONTROLE','COMBAT',21,6,6,2,4,5],['Magnézone','magnezone','CONTROLE','ACIER',20,3,4,6,6,6],['Arcanin','arcanin','FLANK','FEU',20,8,3,4,4,9],['Nostenfer','nostefer','FLANK','POISON',20,10,2,1,4,10],['Étouraptor','etouraptor','FLANK','VOL',21,9,4,1,5,8],['Pikachu','pikachu','FLANK','ELECTRIQUE',16,6,3,8,3,9],['Carchacrok','carchacrok','DPS','DRAGON',21,10,5,7,5,8],['Dracaufeu','dracaufeu','DPS','FEU',20,7,4,10,4,7],['Tauros','tauros','DPS','NORMAL',22,9,6,0,3,9],['Cizayox','cizayox','DPS','INSECTE',20,8,3,2,5,7],['Alakazam','alakazam','SOUTIEN','PSY',20,0,2,10,7,8],['Noctali','noctali','SOUTIEN','TENEBRE',21,6,6,6,6,6],['Leveinard','leveinard','SOUTIEN','FEE',25,4,5,2,5,4],['Azumarill','azumarill','SOUTIEN','EAU',20,9,4,1,5,4]];
+const pokemons=[['Ronflex','ronflex','TANK','NORMAL',25,5,10,2,7,4],['Tortank','tortank','TANK','EAU',24,5,6,5,8,5],['Mammochon','mammochon','TANK','SOL',22,6,5,2,10,3],['Grolem','grolem','TANK','ROCHE',22,6,9,1,5,4],['Ectoplasma','ectoplasma','CONTROLE','SPECTRE',21,2,4,9,7,7],['Lokhlass','lokhlass','CONTROLE','GLACE',22,2,5,7,5,6],['Bétochef','betochef','CONTROLE','COMBAT',21,6,6,2,4,5],['Magnézone','magnezone','CONTROLE','ACIER',20,3,4,6,6,6],['Arcanin','arcanin','FLANK','FEU',20,8,3,4,4,9],['Nostenfer','nostenfer','FLANK','POISON',20,10,2,1,4,10],['Étouraptor','etouraptor','FLANK','VOL',21,9,4,1,5,8],['Pikachu','pikachu','FLANK','ELECTRIQUE',16,6,3,8,3,9],['Carchacrok','carchacrok','DPS','DRAGON',21,10,5,7,5,8],['Dracaufeu','dracaufeu','DPS','FEU',20,7,4,10,4,7],['Tauros','tauros','DPS','NORMAL',22,9,6,0,3,9],['Cizayox','cizayox','DPS','INSECTE',20,8,3,2,5,7],['Alakazam','alakazam','SOUTIEN','PSY',20,0,2,10,7,8],['Noctali','noctali','SOUTIEN','TENEBRE',21,6,6,6,6,6],['Leveinard','leveinard','SOUTIEN','FEE',25,4,5,2,5,4],['Azumarill','azumarill','SOUTIEN','EAU',20,9,4,1,5,4]];
 const attacks=[['Abri','Spéciale','Normal'],['Aeropique','Physique','Vol'],['Balayage','Physique','Combat'],["Ball'Ombre",'Spéciale','Spectre'],['Blizzard','Spéciale','Glace'],['Cage-eclair','Spéciale','Electrique'],['Cascade','Physique','Eau'],['Change-éclair','Physique','Electrique'],['Charge','Physique','Normal'],['Clonage','Spéciale','Normal'],["Coup-d'main",'Spéciale','Normal'],['Draco-Griffe','Physique','Dragon'],['Eboulement','Physique','Roche'],['Entrave','Spéciale','Normal'],['Fatal-Foudre','Spéciale','Electrique'],['Feu follet','Spéciale','Feu'],['Flammèche','Spéciale','Feu'],['Grêle','Spéciale','Glace'],['Hypnose','Spéciale','Psy'],['Jet de sable','Spéciale','Sol'],['Lance-Flamme','Spéciale','Feu'],['Laser-Glace','Spéciale','Glace'],['Ligotage','Physique','Normal'],['Mach punch','Physique','Combat'],['Morsure','Physique','Tenebre'],['Mur lumière','Spéciale','Psy'],['Passe-Passe','Spéciale','Ténèbre'],['Pied voltige','Physique','Combat'],['Pistolet à eau','Spéciale','Eau'],['Plaie-Croix','Physique','Insecte'],['Protection','Spéciale','Psy'],['Psyko','Spéciale','Psy'],['Rebond','Physique','Vol'],['Reflet','Spéciale','Normal'],['Relais','Spéciale','Normal'],['Seisme','Physique','Sol'],['Soin','Spéciale','Normal'],['Téléport','Spéciale','Psy'],['Tomberoche','Physique','Roche'],['Tonnerre','Spéciale','Electrique'],['Toxic','Spéciale','Poison'],['Ultralaser','Spéciale','Normal'],['Vampigraine','Spéciale','Plante'],['Vampipoing','Physique','Combat'],['Vengeance','Physique','Normal'],['Vibroscur','Spéciale','Ténèbre'],['Vive-attaque','Physique','Normal'],['Vol','Physique','Vol']];
 const typeClass={Normal:'normal',Feu:'feu',Eau:'eau',Electrique:'electrique',Plante:'plante',Glace:'glace',Combat:'combat',Poison:'poison',Sol:'sol',Vol:'vol',Psy:'psy',Insecte:'insecte',Roche:'roche',Spectre:'spectre',Dragon:'dragon',Ténèbre:'tenebre',Tenebre:'tenebre'};
-let team=[{pokemon:'',attacks:[]}],active=0;const $=id=>document.getElementById(id);const imgType=c=>c==='Physique'?'../images/dPhysique.png':'../images/dSpeciale.png';const pokemonById=id=>pokemons.find(p=>p[1]===id);
+let team=[{pokemon:'',attacks:[]}],active=0;
+const $=id=>document.getElementById(id);
+const imgType=c=>c==='Physique'?'../images/dPhysique.png':'../images/dSpeciale.png';
+const pokemonById=id=>pokemons.find(p=>p[1]===id);
 function statsHTML(p){return `<div class="stats"><div class="stats-title">Statistiques</div><div class="stats-grid">${['PV','ATQ','DEF','ATQ SPÉ','DEF SPÉ','VIT'].map((x,i)=>`<div class="stat"><span class="stat-label">${x}</span><span class="stat-value">${p[4+i]}</span></div>`).join('')}</div></div>`}
 function attackChip(name,i,ai){const a=attacks.find(x=>x[0]===name);return `<div class="attack-chip ${typeClass[a[2]]||'normal'}"><img src="${imgType(a[1])}"><span>${a[0]}</span><button class="attack-remove" data-index="${ai}">×</button></div>`}
 function renderTeam(){const el=$('team');el.innerHTML='';team.forEach((p,i)=>{const chosen=pokemonById(p.pokemon),card=document.createElement('article');card.className='pokemon-card'+(i===active?' active':'');card.onclick=e=>{if(!e.target.closest('select,button')){active=i;render()}};card.innerHTML=`<div class="card-head"><div class="slot">Pokémon ${i+1}</div>${team.length>1?'<button class="trash-poke">🗑</button>':''}</div><div class="pokemon-image">${chosen?`<img src="../images/${chosen[1]}.png" alt="${chosen[0]}">`:'<span>Choisis ton Pokémon</span>'}</div><select class="poke-select"><option value="">— Choisir un Pokémon —</option>${pokemons.map(x=>`<option value="${x[1]}" ${p.pokemon===x[1]?'selected':''}>${x[0]}</option>`).join('')}</select>${chosen?statsHTML(chosen):''}<div class="selected-attacks">${p.attacks.map((a,j)=>attackChip(a,i,j)).join('')||'<div style="grid-column:1/-1;text-align:center;color:#9aa6b5;padding:8px">Aucune capacité sélectionnée</div>'}</div>`;card.querySelector('select').onchange=e=>{p.pokemon=e.target.value;render()};const del=card.querySelector('.trash-poke');if(del)del.onclick=e=>{e.stopPropagation();team.splice(i,1);active=Math.min(active,team.length-1);render()};card.querySelectorAll('.attack-remove').forEach(b=>b.onclick=e=>{e.stopPropagation();p.attacks.splice(+b.dataset.index,1);render()});el.appendChild(card)});$('teamCounter').textContent=`${team.length} / 6 Pokémon`;$('addPokemon').disabled=team.length>=6}
@@ -9,46 +12,72 @@ function renderAttacks(){const p=team[active],h=$('availableAttacks');$('attackH
 function render(){renderTeam();renderAttacks()}
 $('addPokemon').onclick=()=>{if(team.length<6){team.push({pokemon:'',attacks:[]});active=team.length-1;render()}};
 
+function waitForImages(root){
+  return Promise.all([...root.querySelectorAll('img')].map(img=>new Promise(resolve=>{
+    if(img.complete){resolve();return;}
+    img.onload=resolve;
+    img.onerror=resolve;
+  })));
+}
+
 $('exportImage').onclick=async()=>{
   const button=$('exportImage');
+  if(typeof window.html2canvas!=='function'){
+    alert('Le générateur PNG n’est pas chargé. Recharge la page avec Ctrl+F5 puis réessaie.');
+    return;
+  }
   button.disabled=true;
+  const oldText=button.textContent;
   button.textContent='⏳ Génération...';
+  const exportRoot=document.createElement('div');
+  exportRoot.className='export-copy';
+  exportRoot.style.position='fixed';
+  exportRoot.style.left='0';
+  exportRoot.style.top='0';
+  exportRoot.style.zIndex='99999';
+  exportRoot.style.width='1200px';
+  exportRoot.style.padding='24px';
+  exportRoot.style.background='#eef2f7';
+  const title=document.createElement('h2');
+  title.textContent='Pokémon Wargame — Fiche de combat';
+  title.style.margin='0 0 18px';
+  exportRoot.appendChild(title);
+  const teamCopy=document.getElementById('team').cloneNode(true);
+  teamCopy.classList.add('team');
+  teamCopy.querySelectorAll('.pokemon-card').forEach((card,index)=>{
+    const chosen=pokemonById(team[index].pokemon);
+    const select=card.querySelector('.poke-select');
+    if(select){
+      const name=document.createElement('div');
+      name.className='export-name';
+      name.textContent=chosen?chosen[0]:'Pokémon non sélectionné';
+      select.replaceWith(name);
+    }
+    card.classList.remove('active');
+  });
+  exportRoot.appendChild(teamCopy);
+  document.body.appendChild(exportRoot);
   try{
-    if(typeof html2canvas!=='function')throw new Error('Le générateur d’image n’est pas chargé. Recharge la page puis réessaie.');
-    const exportRoot=document.createElement('div');
-    exportRoot.className='export-copy';
-    const title=document.createElement('h2');
-    title.textContent='Pokémon Wargame — Fiche de combat';
-    exportRoot.appendChild(title);
-    const teamCopy=document.getElementById('team').cloneNode(true);
-    teamCopy.classList.add('team');
-    teamCopy.querySelectorAll('.pokemon-card').forEach((card,index)=>{
-      const poke=team[index];
-      const chosen=pokemonById(poke.pokemon);
-      const select=card.querySelector('.poke-select');
-      if(select){const name=document.createElement('div');name.className='export-name';name.textContent=chosen?chosen[0]:'Pokémon non sélectionné';select.replaceWith(name)}
-      card.classList.remove('active');
-      card.querySelectorAll('button').forEach(b=>b.remove());
-    });
-    exportRoot.appendChild(teamCopy);
-    document.body.appendChild(exportRoot);
-    const images=[...exportRoot.querySelectorAll('img')];
-    await Promise.all(images.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=resolve;img.onerror=resolve})));
-    const canvas=await html2canvas(exportRoot,{backgroundColor:'#eef2f7',scale:2,useCORS:true,allowTaint:false});
-    const link=document.createElement('a');
-    link.download=`pokemon-wargame-fiche-${team.length}-pokemon.png`;
-    link.href=canvas.toDataURL('image/png');
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    exportRoot.remove();
+    await waitForImages(exportRoot);
+    const canvas=await window.html2canvas(exportRoot,{backgroundColor:'#eef2f7',scale:2,useCORS:false,allowTaint:false,logging:false});
+    canvas.toBlob(blob=>{
+      if(!blob){alert('Impossible de créer le PNG.');return;}
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');
+      link.href=url;
+      link.download=`pokemon-wargame-fiche-${team.length}-pokemon.png`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+    },'image/png');
   }catch(error){
-    console.error(error);
-    alert('Impossible de générer l’image : '+error.message);
-    document.querySelector('.export-copy')?.remove();
+    console.error('Erreur export PNG:',error);
+    alert('Erreur pendant la génération du PNG. Regarde la console avec F12.');
   }finally{
+    exportRoot.remove();
     button.disabled=false;
-    button.textContent='🖼️ Générer l’image';
+    button.textContent=oldText;
   }
 };
 render();
