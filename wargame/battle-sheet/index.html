@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pokémon Wargame — Fiches de combat</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Pokémon Wargame</h1>
+  <p>Créateur de fiches de combat — V1</p>
+</header>
+<main>
+  <section>
+    <div class="section-title">
+      <h2>Mon équipe</h2>
+      <div class="counter" id="teamCounter">1 / 6 Pokémon</div>
+    </div>
+    <div class="team" id="team"></div>
+    <div class="actions">
+      <button class="add-btn" id="addPokemon">＋ Ajouter un Pokémon</button>
+    </div>
+  </section>
+
+  <section class="attack-panel">
+    <h2>Capacités disponibles</h2>
+    <p class="hint" id="attackHint">Sélectionne un Pokémon puis clique sur ses capacités. Maximum 4 capacités par Pokémon.</p>
+    <div class="available" id="availableAttacks"></div>
+  </section>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
