@@ -10,37 +10,45 @@ function render(){renderTeam();renderAttacks()}
 $('addPokemon').onclick=()=>{if(team.length<6){team.push({pokemon:'',attacks:[]});active=team.length-1;render()}};
 
 $('exportImage').onclick=async()=>{
-  if(!window.html2canvas)return;
-  const exportRoot=document.createElement('div');
-  exportRoot.className='export-copy';
-  const title=document.createElement('h2');
-  title.textContent='Pokémon Wargame — Fiche de combat';
-  title.style.margin='0 0 18px';
-  exportRoot.appendChild(title);
-  const teamCopy=document.getElementById('team').cloneNode(true);
-  teamCopy.classList.add('team');
-  teamCopy.querySelectorAll('.pokemon-card').forEach((card,index)=>{
-    const poke=team[index];
-    const chosen=pokemonById(poke.pokemon);
-    const select=card.querySelector('.poke-select');
-    if(select){
-      const name=document.createElement('div');
-      name.className='export-name';
-      name.textContent=chosen?chosen[0]:'Pokémon non sélectionné';
-      select.replaceWith(name);
-    }
-    card.classList.remove('active');
-  });
-  exportRoot.appendChild(teamCopy);
-  document.body.appendChild(exportRoot);
+  const button=$('exportImage');
+  button.disabled=true;
+  button.textContent='⏳ Génération...';
   try{
-    const canvas=await html2canvas(exportRoot,{backgroundColor:'#eef2f7',scale:2,useCORS:true});
+    if(typeof html2canvas!=='function')throw new Error('Le générateur d’image n’est pas chargé. Recharge la page puis réessaie.');
+    const exportRoot=document.createElement('div');
+    exportRoot.className='export-copy';
+    const title=document.createElement('h2');
+    title.textContent='Pokémon Wargame — Fiche de combat';
+    exportRoot.appendChild(title);
+    const teamCopy=document.getElementById('team').cloneNode(true);
+    teamCopy.classList.add('team');
+    teamCopy.querySelectorAll('.pokemon-card').forEach((card,index)=>{
+      const poke=team[index];
+      const chosen=pokemonById(poke.pokemon);
+      const select=card.querySelector('.poke-select');
+      if(select){const name=document.createElement('div');name.className='export-name';name.textContent=chosen?chosen[0]:'Pokémon non sélectionné';select.replaceWith(name)}
+      card.classList.remove('active');
+      card.querySelectorAll('button').forEach(b=>b.remove());
+    });
+    exportRoot.appendChild(teamCopy);
+    document.body.appendChild(exportRoot);
+    const images=[...exportRoot.querySelectorAll('img')];
+    await Promise.all(images.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=resolve;img.onerror=resolve})));
+    const canvas=await html2canvas(exportRoot,{backgroundColor:'#eef2f7',scale:2,useCORS:true,allowTaint:false});
     const link=document.createElement('a');
     link.download=`pokemon-wargame-fiche-${team.length}-pokemon.png`;
     link.href=canvas.toDataURL('image/png');
+    document.body.appendChild(link);
     link.click();
-  }finally{
+    link.remove();
     exportRoot.remove();
+  }catch(error){
+    console.error(error);
+    alert('Impossible de générer l’image : '+error.message);
+    document.querySelector('.export-copy')?.remove();
+  }finally{
+    button.disabled=false;
+    button.textContent='🖼️ Générer l’image';
   }
 };
 render();
