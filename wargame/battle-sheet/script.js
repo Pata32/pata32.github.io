@@ -6,4 +6,41 @@ function statsHTML(p){return `<div class="stats"><div class="stats-title">Statis
 function attackChip(name,i,ai){const a=attacks.find(x=>x[0]===name);return `<div class="attack-chip ${typeClass[a[2]]||'normal'}"><img src="${imgType(a[1])}"><span>${a[0]}</span><button class="attack-remove" data-index="${ai}">×</button></div>`}
 function renderTeam(){const el=$('team');el.innerHTML='';team.forEach((p,i)=>{const chosen=pokemonById(p.pokemon),card=document.createElement('article');card.className='pokemon-card'+(i===active?' active':'');card.onclick=e=>{if(!e.target.closest('select,button')){active=i;render()}};card.innerHTML=`<div class="card-head"><div class="slot">Pokémon ${i+1}</div>${team.length>1?'<button class="trash-poke">🗑</button>':''}</div><div class="pokemon-image">${chosen?`<img src="../images/${chosen[1]}.png" alt="${chosen[0]}">`:'<span>Choisis ton Pokémon</span>'}</div><select class="poke-select"><option value="">— Choisir un Pokémon —</option>${pokemons.map(x=>`<option value="${x[1]}" ${p.pokemon===x[1]?'selected':''}>${x[0]}</option>`).join('')}</select>${chosen?statsHTML(chosen):''}<div class="selected-attacks">${p.attacks.map((a,j)=>attackChip(a,i,j)).join('')||'<div style="grid-column:1/-1;text-align:center;color:#9aa6b5;padding:8px">Aucune capacité sélectionnée</div>'}</div>`;card.querySelector('select').onchange=e=>{p.pokemon=e.target.value;render()};const del=card.querySelector('.trash-poke');if(del)del.onclick=e=>{e.stopPropagation();team.splice(i,1);active=Math.min(active,team.length-1);render()};card.querySelectorAll('.attack-remove').forEach(b=>b.onclick=e=>{e.stopPropagation();p.attacks.splice(+b.dataset.index,1);render()});el.appendChild(card)});$('teamCounter').textContent=`${team.length} / 6 Pokémon`;$('addPokemon').disabled=team.length>=6}
 function renderAttacks(){const p=team[active],h=$('availableAttacks');$('attackHint').textContent=pokemonById(p.pokemon)?`Pokémon actif : ${pokemonById(p.pokemon)[0]} — ${p.attacks.length} / 4 capacités sélectionnées.`:'Sélectionne un Pokémon dans ton équipe pour choisir ses capacités.';h.innerHTML=attacks.map(a=>{const disabled=p.attacks.includes(a[0])||p.attacks.length>=4;return `<button class="attack-button ${typeClass[a[2]]||'normal'}" ${disabled?'disabled':''} data-name="${a[0]}"><img src="${imgType(a[1])}"><span class="attack-info"><span class="attack-name">${a[0]}</span><span class="attack-type">${a[1]} · ${a[2]}</span></span></button>`}).join('');h.querySelectorAll('.attack-button:not(:disabled)').forEach(b=>b.onclick=()=>{if(p.pokemon){p.attacks.push(b.dataset.name);render()}})}
-function render(){renderTeam();renderAttacks()}$('addPokemon').onclick=()=>{if(team.length<6){team.push({pokemon:'',attacks:[]});active=team.length-1;render()}};render();
+function render(){renderTeam();renderAttacks()}
+$('addPokemon').onclick=()=>{if(team.length<6){team.push({pokemon:'',attacks:[]});active=team.length-1;render()}};
+
+$('exportImage').onclick=async()=>{
+  if(!window.html2canvas)return;
+  const exportRoot=document.createElement('div');
+  exportRoot.className='export-copy';
+  const title=document.createElement('h2');
+  title.textContent='Pokémon Wargame — Fiche de combat';
+  title.style.margin='0 0 18px';
+  exportRoot.appendChild(title);
+  const teamCopy=document.getElementById('team').cloneNode(true);
+  teamCopy.classList.add('team');
+  teamCopy.querySelectorAll('.pokemon-card').forEach((card,index)=>{
+    const poke=team[index];
+    const chosen=pokemonById(poke.pokemon);
+    const select=card.querySelector('.poke-select');
+    if(select){
+      const name=document.createElement('div');
+      name.className='export-name';
+      name.textContent=chosen?chosen[0]:'Pokémon non sélectionné';
+      select.replaceWith(name);
+    }
+    card.classList.remove('active');
+  });
+  exportRoot.appendChild(teamCopy);
+  document.body.appendChild(exportRoot);
+  try{
+    const canvas=await html2canvas(exportRoot,{backgroundColor:'#eef2f7',scale:2,useCORS:true});
+    const link=document.createElement('a');
+    link.download=`pokemon-wargame-fiche-${team.length}-pokemon.png`;
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+  }finally{
+    exportRoot.remove();
+  }
+};
+render();
