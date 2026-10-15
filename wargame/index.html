@@ -9,13 +9,13 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
 header{background:#202938;color:white;padding:22px 28px;box-shadow:0 3px 12px #0002}header h1{margin:0;font-size:28px}header p{margin:6px 0 0;color:#cbd5e1}
 main{max-width:1500px;margin:24px auto;padding:0 20px}.section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.section-title h2{margin:0;font-size:21px}.counter{color:var(--muted);font-weight:700}
-.team{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.pokemon-card{position:relative;background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:14px;min-height:330px;cursor:pointer;box-shadow:var(--shadow);transition:.15s}.pokemon-card:hover{transform:translateY(-2px)}.pokemon-card.active{border-color:#4b78d1;box-shadow:0 0 0 3px #4b78d126,var(--shadow)}
+.team{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.pokemon-card{position:relative;background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:14px;min-height:410px;cursor:pointer;box-shadow:var(--shadow);transition:.15s}.pokemon-card:hover{transform:translateY(-2px)}.pokemon-card.active{border-color:#4b78d1;box-shadow:0 0 0 3px #4b78d126,var(--shadow)}
 .card-head{display:flex;align-items:center;justify-content:space-between}.slot{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase}.trash-poke{border:0;background:#fff0f0;color:#d12b2b;width:32px;height:32px;border-radius:9px;cursor:pointer;font-size:17px}.trash-poke:hover{background:#ffdede}
 .pokemon-image{height:150px;display:flex;align-items:center;justify-content:center}.pokemon-image img{max-height:145px;max-width:180px;object-fit:contain}.pokemon-name{text-align:center;font-size:20px;font-weight:900;margin-bottom:10px}.poke-select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:white;font-weight:700}
 .selected-attacks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.attack-chip{display:flex;align-items:center;gap:7px;color:#fff;border-radius:8px;padding:7px 9px;font-size:12px;font-weight:900;min-width:0}.attack-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.attack-chip img{width:20px;height:12px;object-fit:contain;flex:none}.attack-remove{margin-left:auto;border:0;background:#0003;color:white;border-radius:5px;cursor:pointer;width:22px;height:22px;flex:none}.empty-slot{height:330px;border:2px dashed #c8d1de;border-radius:18px;display:flex;align-items:center;justify-content:center;color:#8491a3;background:#ffffff66}
+.stats{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}.stats-title{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:900;margin-bottom:7px}.stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}.stat{background:#f3f6fa;border-radius:7px;text-align:center;padding:5px 2px}.stat-label{display:block;font-size:9px;color:var(--muted);font-weight:800;text-transform:uppercase}.stat-value{display:block;font-size:15px;font-weight:900;margin-top:2px}
 .actions{display:flex;justify-content:center;margin:22px 0 30px}.add-btn{border:0;background:#2f65c8;color:#fff;border-radius:12px;padding:13px 22px;font-size:15px;font-weight:900;cursor:pointer}.add-btn:disabled{opacity:.4;cursor:not-allowed}
 .attack-panel{background:var(--panel);border-radius:18px;padding:20px;box-shadow:var(--shadow);border:1px solid var(--line)}.attack-panel h2{margin:0 0 4px}.attack-panel .hint{color:var(--muted);margin:0 0 16px}.available{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.attack-button{border:0;color:white;border-radius:9px;padding:10px 8px;min-height:52px;display:flex;align-items:center;gap:8px;text-align:left;cursor:pointer;box-shadow:inset 0 -2px #0002;transition:.12s}.attack-button:hover:not(:disabled){filter:brightness(1.08);transform:translateY(-1px)}.attack-button:disabled{opacity:.38;cursor:not-allowed}.attack-button img{width:27px;height:16px;object-fit:contain;flex:none}.attack-info{display:flex;flex-direction:column;min-width:0}.attack-name{font-weight:900;font-size:12px;line-height:1.15}.attack-type{font-size:10px;opacity:.9;margin-top:2px}
-/* Couleurs des types */
 .normal{background:#8b98a6}.feu{background:#e85b3f}.eau{background:#4b8ed8}.electrique{background:#d8aa00}.plante{background:#5aab62}.glace{background:#58b8c8}.combat{background:#b84a3e}.poison{background:#9a59a6}.sol{background:#b28a42}.vol{background:#7899d2}.psy{background:#d45b86}.insecte{background:#8ca83e}.roche{background:#927b58}.spectre{background:#66558d}.dragon{background:#5e5bc0}.tenebre{background:#51444b}
 @media(max-width:1050px){.team{grid-template-columns:repeat(2,minmax(0,1fr))}.available{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:700px){.team{grid-template-columns:1fr}.available{grid-template-columns:repeat(2,minmax(0,1fr))}.selected-attacks{grid-template-columns:1fr}}
 </style>
@@ -36,15 +36,21 @@ main{max-width:1500px;margin:24px auto;padding:0 20px}.section-title{display:fle
 </main>
 <script>
 const pokemons=[
- ['Ronflex','ronflex'],['Tortank','tortank'],['Mammochon','mammochon'],['Grolem','grolem'],['Ectoplasma','ectoplasma'],['Lokhlass','lokhlass'],['Bétochef','betochef'],['Magnézone','magnezone'],['Arcanin','arcanin'],['Nostenfer','nostenfer'],['Étouraptor','etouraptor'],['Pikachu','pikachu'],['Carchacrok','carchacrok'],['Dracaufeu','dracaufeu'],['Tauros','tauros'],['Cizayox','cizayox'],['Alakazam','alakazam'],['Noctali','noctali'],['Leveinard','leveinard'],['Azumarill','azumarill']
+ ['Ronflex','ronflex','TANK','NORMAL',25,5,10,2,7,4],['Tortank','tortank','TANK','EAU',24,5,6,5,8,5],['Mammochon','mammochon','TANK','SOL',22,6,5,2,10,3],['Grolem','grolem','TANK','ROCHE',22,6,9,1,5,4],
+ ['Ectoplasma','ectoplasma','CONTROLE','SPECTRE',21,2,4,9,7,7],['Lokhlass','lokhlass','CONTROLE','GLACE',22,2,5,7,5,6],['Bétochef','betochef','CONTROLE','COMBAT',21,6,6,2,4,5],['Magnézone','magnezone','CONTROLE','ACIER',20,3,4,6,6,6],
+ ['Arcanin','arcanin','FLANK','FEU',20,8,3,4,4,9],['Nostenfer','nostefer','FLANK','POISON',20,10,2,1,4,10],['Étouraptor','etouraptor','FLANK','VOL',21,9,4,1,5,8],['Pikachu','pikachu','FLANK','ELECTRIQUE',16,6,3,8,3,9],
+ ['Carchacrok','carchacrok','DPS','DRAGON',21,10,5,7,5,8],['Dracaufeu','dracaufeu','DPS','FEU',20,7,4,10,4,7],['Tauros','tauros','DPS','NORMAL',22,9,6,0,3,9],['Cizayox','cizayox','DPS','INSECTE',20,8,3,2,5,7],
+ ['Alakazam','alakazam','SOUTIEN','PSY',20,0,2,10,7,8],['Noctali','noctali','SOUTIEN','TENEBRE',21,6,6,6,6,6],['Leveinard','leveinard','SOUTIEN','FEE',25,4,5,2,5,4],['Azumarill','azumarill','SOUTIEN','EAU',20,9,4,1,5,4]
 ];
 const attacks=[
  ['Abri','Spéciale','Normal'],['Aeropique','Physique','Vol'],['Balayage','Physique','Combat'],["Ball'Ombre",'Spéciale','Spectre'],['Blizzard','Spéciale','Glace'],['Cage-eclair','Spéciale','Electrique'],['Cascade','Physique','Eau'],['Change-éclair','Physique','Electrique'],['Charge','Physique','Normal'],['Clonage','Spéciale','Normal'],["Coup-d'main",'Spéciale','Normal'],['Draco-Griffe','Physique','Dragon'],['Eboulement','Physique','Roche'],['Entrave','Spéciale','Normal'],['Fatal-Foudre','Spéciale','Electrique'],['Feu follet','Spéciale','Feu'],['Flammèche','Spéciale','Feu'],['Grêle','Spéciale','Glace'],['Hypnose','Spéciale','Psy'],['Jet de sable','Spéciale','Sol'],['Lance-Flamme','Spéciale','Feu'],['Laser-Glace','Spéciale','Glace'],['Ligotage','Physique','Normal'],['Mach punch','Physique','Combat'],['Morsure','Physique','Tenebre'],['Mur lumière','Spéciale','Psy'],['Passe-Passe','Spéciale','Ténèbre'],['Pied voltige','Physique','Combat'],['Pistolet à eau','Spéciale','Eau'],['Plaie-Croix','Physique','Insecte'],['Protection','Spéciale','Psy'],['Psyko','Spéciale','Psy'],['Rebond','Physique','Vol'],['Reflet','Spéciale','Normal'],['Relais','Spéciale','Normal'],['Seisme','Physique','Sol'],['Soin','Spéciale','Normal'],['Téléport','Spéciale','Psy'],['Tomberoche','Physique','Roche'],['Tonnerre','Spéciale','Electrique'],['Toxic','Spéciale','Poison'],['Ultralaser','Spéciale','Normal'],['Vampigraine','Spéciale','Plante'],['Vampipoing','Physique','Combat'],['Vengeance','Physique','Normal'],['Vibroscur','Spéciale','Ténèbre'],['Vive-attaque','Physique','Normal'],['Vol','Physique','Vol']
 ];
 const typeClass={Normal:'normal',Feu:'feu',Eau:'eau',Electrique:'electrique',Plante:'plante',Glace:'glace',Combat:'combat',Poison:'poison',Sol:'sol',Vol:'vol',Psy:'psy',Insecte:'insecte',Roche:'roche',Spectre:'spectre',Dragon:'dragon',Ténèbre:'tenebre',Tenebre:'tenebre'};
+const roleClass={TANK:'tank',CONTROLE:'controle',FLANK:'flank',DPS:'dps',SOUTIEN:'soutien'};
 let team=[{pokemon:'',attacks:[]}];let active=0;
 const $=id=>document.getElementById(id);
 function imgType(category){return category==='Physique'?'images/dPhysique.png':'images/dSpeciale.png'}
+function pokemonById(id){return pokemons.find(x=>x[1]===id)}
 function renderTeam(){
  const el=$('team');el.innerHTML='';
  team.forEach((p,i)=>{
@@ -53,6 +59,7 @@ function renderTeam(){
   card.innerHTML=`<div class="card-head"><div class="slot">Pokémon ${i+1}</div>${team.length>1?'<button class="trash-poke" title="Supprimer ce Pokémon">🗑</button>':''}</div>
   <div class="pokemon-image">${chosen?`<img src="images/${chosen[1]}.png" alt="${chosen[0]}">`:'<span style="color:#9aa6b5">Choisis ton Pokémon</span>'}</div>
   <select class="poke-select"><option value="">— Choisir un Pokémon —</option>${pokemons.map(x=>`<option value="${x[1]}" ${p.pokemon===x[1]?'selected':''}>${x[0]}</option>`).join('')}</select>
+  ${chosen?statsHTML(chosen):''}
   <div class="selected-attacks">${p.attacks.map((a,ai)=>attackChip(a,i,ai)).join('')||'<div style="grid-column:1/-1;text-align:center;color:#9aa6b5;font-size:12px;padding:8px">Aucune capacité sélectionnée</div>'}</div>`;
   card.querySelector('select').onchange=e=>{p.pokemon=e.target.value;render()};
   const del=card.querySelector('.trash-poke');if(del)del.onclick=e=>{e.stopPropagation();team.splice(i,1);active=Math.min(active,team.length-1);render()};
@@ -61,8 +68,11 @@ function renderTeam(){
  });
  $('teamCounter').textContent=`${team.length} / 6 Pokémon`; $('addPokemon').disabled=team.length>=6;
 }
+function statsHTML(p){
+ const labels=['PV','ATQ','DEF','ATQ SPÉ','DEF SPÉ','VIT'];
+ return `<div class="stats"><div class="stats-title">Statistiques</div><div class="stats-grid">${labels.map((l,i)=>`<div class="stat"><span class="stat-label">${l}</span><span class="stat-value">${p[4+i]}</span></div>`).join('')}</div></div>`;
+}
 function attackChip(name,i,ai){const a=attacks.find(x=>x[0]===name);const cls=typeClass[a[2]]||'normal';return `<div class="attack-chip ${cls}"><img src="${imgType(a[1])}" alt="${a[1]}"><span>${a[0]}</span><button class="attack-remove" data-index="${ai}" title="Retirer">×</button></div>`}
-function pokemonById(id){return pokemons.find(x=>x[1]===id)}
 function renderAttacks(){
  const p=team[active];const holder=$('availableAttacks');
  $('attackHint').textContent=pokemonById(p.pokemon)?`Pokémon actif : ${pokemonById(p.pokemon)[0]} — ${p.attacks.length} / 4 capacités sélectionnées.`:'Sélectionne un Pokémon dans ton équipe pour choisir ses capacités.';
