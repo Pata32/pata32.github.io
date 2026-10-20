@@ -1,34 +1,42 @@
-const SHEET_ID='1TMKWMQhyWdGK7gimvBYuSujIGaGAMmAOtXVrSZvJpY4';
+const PUBLISHED_SHEET_ID='2PACX-1vRPESf4SePJuabGEYnafeWuMqMJhHxV78tjI5rqwRYtTsR2rCQqCM2PqQx8C8_pkWx-2vrf7cN1erSF';
 const SHEET_GID='1183777585';
-const SHEET_URL=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${SHEET_GID}&range=A4:M1000&headers=1&tqx=out:json;responseHandler:handleGoogleSheets`;
+const SHEET_URL=`https://docs.google.com/spreadsheets/d/e/${PUBLISHED_SHEET_ID}/pub?gid=${SHEET_GID}&single=true&output=csv`;
 const typeClass={Normal:'normal',Feu:'feu',Eau:'eau',Electrique:'electrique',Plante:'plante',Glace:'glace',Combat:'combat',Poison:'poison',Sol:'sol',Vol:'vol',Psy:'psy',Insecte:'insecte',Roche:'roche',Spectre:'spectre',Dragon:'dragon',Ténèbre:'tenebre',Tenebre:'tenebre',Acier:'acier',FEE:'fee',Fée:'fee'};
 let capacities=[];
 function clean(v){return String(v??'').replace(/^\uFEFF/,'').trim()}
 function normalizeHeader(v){return clean(v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[🎲💥🎯📏⭐📝]/g,'').replace(/\s+/g,' ')}
-function cellValue(cell){return cell&&cell.v!=null?clean(cell.v):cell&&cell.f!=null?clean(cell.f):''}
+function parseCSV(text){
+  const rows=[];let row=[],cell='',quoted=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i],next=text[i+1];
+    if(ch==='"'){
+      if(quoted&&next==='"'){cell+='"';i++}else quoted=!quoted;
+    }else if(ch===','&&!quoted){row.push(cell);cell=''}
+    else if((ch==='\n'||ch==='\r')&&!quoted){if(ch==='\r'&&next==='\n')i++;row.push(cell);cell='';if(row.some(v=>clean(v)!==''))rows.push(row);row=[]}
+    else cell+=ch;
+  }
+  if(cell!==''||row.length){row.push(cell);if(row.some(v=>clean(v)!==''))rows.push(row)}
+  return rows;
+}
 function loadCapacities(){
-  window.handleGoogleSheets=function(data){
-    try{
-      console.log('Google Sheets response:',data);
-      if(!data) throw new Error('Google Sheets n\'a renvoyé aucune donnée');
-      if(data.status&&String(data.status).toLowerCase()!=='ok'&&String(data.status).toLowerCase()!=='warning'){
-        const detail=(data.errors||[]).map(e=>e&&((e.detailed_message)||e.message||e.reason)).filter(Boolean).join(' | ');
-        throw new Error(`Google Sheets: ${detail||data.status}`);
-      }
-      const table=data.table || (data.cols&&data.rows?data:null);
-      if(!table||!Array.isArray(table.cols)) throw new Error('Réponse Google Sheets invalide');
-      const headers=table.cols.map(c=>normalizeHeader(c.label||c.id||''));
+  document.getElementById('status').textContent='Chargement des capacités…';
+  fetch(SHEET_URL,{cache:'no-store'})
+    .then(response=>{if(!response.ok)throw new Error(`Google Sheets HTTP ${response.status}`);return response.text()})
+    .then(text=>{
+      console.log('Google Sheets CSV reçu:',text.slice(0,500));
+      const rows=parseCSV(text);
+      if(!rows.length)throw new Error('Google Sheets a renvoyé un CSV vide');
+      const headerRowIndex=rows.findIndex(row=>row.some(v=>normalizeHeader(v)==='code')&&row.some(v=>normalizeHeader(v)==='nom'));
+      if(headerRowIndex<0)throw new Error('Colonnes Code/Nom introuvables dans le CSV Google Sheets');
+      const headers=rows[headerRowIndex].map(normalizeHeader);
       const index=(...names)=>{for(const n of names){const i=headers.indexOf(normalizeHeader(n));if(i>=0)return i}return -1};
       const ix={code:index('Code','ID'),name:index('Nom','Capacité'),category:index('Catégorie'),type:index('Type'),utility:index('Utilité'),pa:index('PA'),dice:index('Dés'),damage:index('Dégâts','Degats'),accuracy:index('Précision'),range:index('Portée'),target:index('Cible'),crit:index('Critique'),effect:index('Effet')};
-      if(ix.code<0||ix.name<0) throw new Error(`Colonnes Code/Nom introuvables. En-têtes reçus: ${headers.join(' | ')}`);
-      capacities=(table.rows||[]).map(row=>({code:cellValue(row.c?.[ix.code]),name:cellValue(row.c?.[ix.name]),category:cellValue(row.c?.[ix.category]),type:cellValue(row.c?.[ix.type]),utility:cellValue(row.c?.[ix.utility]),pa:cellValue(row.c?.[ix.pa]),dice:cellValue(row.c?.[ix.dice]),damage:cellValue(row.c?.[ix.damage]),accuracy:cellValue(row.c?.[ix.accuracy]),range:cellValue(row.c?.[ix.range]),target:cellValue(row.c?.[ix.target]),crit:cellValue(row.c?.[ix.crit]),effect:cellValue(row.c?.[ix.effect])})).filter(x=>x.code&&x.name);
+      capacities=rows.slice(headerRowIndex+1).map(row=>({code:clean(row[ix.code]),name:clean(row[ix.name]),category:clean(row[ix.category]),type:clean(row[ix.type]),utility:clean(row[ix.utility]),pa:clean(row[ix.pa]),dice:clean(row[ix.dice]),damage:clean(row[ix.damage]),accuracy:clean(row[ix.accuracy]),range:clean(row[ix.range]),target:clean(row[ix.target]),crit:clean(row[ix.crit]),effect:clean(row[ix.effect])})).filter(x=>x.code&&x.name);
+      if(!capacities.length)throw new Error('Aucune capacité trouvée dans le CSV publié');
       render();
       document.getElementById('status').textContent=`${capacities.length} capacités chargées depuis Google Sheets.`;
-    }catch(error){showLoadError(error)}
-    delete window.handleGoogleSheets;
-  };
-  const old=document.getElementById('google-sheets-script');if(old)old.remove();
-  const script=document.createElement('script');script.id='google-sheets-script';script.src=SHEET_URL;script.onerror=()=>showLoadError(new Error('Échec du chargement Google Sheets'));document.head.appendChild(script);
+    })
+    .catch(showLoadError);
 }
 function showLoadError(error){document.getElementById('status').textContent='Erreur Google Sheets : '+error.message;console.error(error)}
 function value(v,fallback='—'){return v||fallback}
