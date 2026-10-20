@@ -29,8 +29,29 @@ function loadCapacities(){
       const headerRowIndex=rows.findIndex(row=>row.some(v=>normalizeHeader(v)==='code')&&row.some(v=>normalizeHeader(v)==='nom'));
       if(headerRowIndex<0)throw new Error('Colonnes Code/Nom introuvables dans le CSV Google Sheets');
       const headers=rows[headerRowIndex].map(normalizeHeader);
-      const index=(...names)=>{for(const n of names){const i=headers.indexOf(normalizeHeader(n));if(i>=0)return i}return -1};
-      const ix={code:index('Code','ID'),name:index('Nom','Capacité'),category:index('Catégorie'),type:index('Type'),utility:index('Utilité'),pa:index('PA'),dice:index('Dés'),damage:index('Dégâts','Degats'),accuracy:index('Précision'),range:index('Portée'),target:index('Cible'),crit:index('Critique'),effect:index('Effet')};
+      const index=(...names)=>{
+        const wanted=names.map(normalizeHeader);
+        let i=headers.findIndex(h=>wanted.includes(h));
+        if(i>=0)return i;
+        i=headers.findIndex(h=>wanted.some(n=>n&&h.includes(n)));
+        return i;
+      };
+      const ix={
+        code:index('Code','ID'),
+        name:index('Nom','Capacité'),
+        category:index('Catégorie'),
+        type:index('Type'),
+        utility:index('Utilité'),
+        pa:index('PA'),
+        dice:index('Dés','Nombre de dés'),
+        damage:index('Dégâts','Degats'),
+        accuracy:index('Précision'),
+        range:index('Portée'),
+        target:index('Cible'),
+        crit:index('Critique'),
+        effect:index('Effet')
+      };
+      console.log('Colonnes détectées:',ix,headers);
       capacities=rows.slice(headerRowIndex+1).map(row=>({code:clean(row[ix.code]),name:clean(row[ix.name]),category:clean(row[ix.category]),type:clean(row[ix.type]),utility:clean(row[ix.utility]),pa:clean(row[ix.pa]),dice:clean(row[ix.dice]),damage:clean(row[ix.damage]),accuracy:clean(row[ix.accuracy]),range:clean(row[ix.range]),target:clean(row[ix.target]),crit:clean(row[ix.crit]),effect:clean(row[ix.effect])})).filter(x=>x.code&&x.name);
       if(!capacities.length)throw new Error('Aucune capacité trouvée dans le CSV publié');
       render();
