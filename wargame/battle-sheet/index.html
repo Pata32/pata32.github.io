@@ -10,6 +10,11 @@
 <header>
   <h1>Pokémon Wargame</h1>
   <p>Créateur de fiches de combat — V1</p>
+  <nav class="top-nav">
+    <a class="active" href="index.html">⚔️ Fiche de combat</a>
+    <a href="../capacities/index.html">✨ Capacités</a>
+    <a href="../sheets/index.html">📊 Google Sheets</a>
+  </nav>
 </header>
 <main>
   <section>
@@ -23,14 +28,13 @@
       <button class="export-btn" id="exportImage" type="button">🖼️ Télécharger la fiche en PNG</button>
     </div>
   </section>
-
   <section class="attack-panel">
     <h2>Capacités disponibles</h2>
-    <p class="hint" id="attackHint">Sélectionne un Pokémon puis clique sur ses capacités. Maximum 4 capacités par Pokémon.</p>
+    <p class="hint" id="attackHint">Chargement des capacités depuis Google Sheets…</p>
     <div class="available" id="availableAttacks"></div>
   </section>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>
