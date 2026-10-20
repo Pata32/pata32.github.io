@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pokémon Wargame — Capacités</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Pokémon Wargame</h1>
+  <p>Base de données des capacités</p>
+  <nav class="top-nav">
+    <a href="../battle-sheet/index.html">⚔️ Fiche de combat</a>
+    <a class="active" href="index.html">✨ Capacités</a>
+    <a href="../sheets/index.html">📊 Google Sheets</a>
+  </nav>
+</header>
+<main>
+  <div class="page-head">
+    <div>
+      <h2>Capacités</h2>
+      <p id="status" class="hint">Chargement depuis Google Sheets…</p>
+    </div>
+    <input id="search" class="search" type="search" placeholder="Rechercher une capacité…" aria-label="Rechercher une capacité">
+  </div>
+  <div id="capacityGrid" class="capacity-grid"></div>
+</main>
+<script src="script.js?v=1"></script>
+</body>
+</html>
